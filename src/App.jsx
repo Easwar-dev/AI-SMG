@@ -1,4 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from './hooks/useAuth'
+import { ThemeContext } from './main'
 
 const floatingIcons = [
   {
@@ -83,21 +86,9 @@ function MoonIcon() {
 }
 
 function App() {
-  const [theme, setTheme] = useState('light')
-
-  useEffect(() => {
-    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY)
-
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      setTheme(savedTheme)
-    }
-  }, [])
-
-  useEffect(() => {
-    const root = document.documentElement
-    root.classList.toggle('dark', theme === 'dark')
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme)
-  }, [theme])
+  const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
+  const { theme, toggleTheme } = useContext(ThemeContext)
 
   const isDark = theme === 'dark'
 
@@ -105,7 +96,7 @@ function App() {
     <main className="min-h-screen bg-gradient-to-b from-[#F0FDF4] to-[#DCFCE7] font-sans text-slate-950 transition-colors duration-500 dark:from-slate-900 dark:to-slate-800 dark:text-white">
       <button
         type="button"
-        onClick={() => setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'))}
+        onClick={toggleTheme}
         className="fixed right-5 top-5 z-30 inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-200/80 bg-white/85 text-slate-700 opacity-0 shadow-[0_16px_40px_-24px_rgba(15,23,42,0.55)] backdrop-blur animate-contentReveal transition-all duration-300 hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-slate-900/80 dark:text-slate-100 dark:hover:bg-slate-900"
         aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       >
@@ -152,12 +143,18 @@ function App() {
           </p>
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-            <button className="inline-flex min-w-36 items-center justify-center rounded-md bg-[#4F46E5] px-8 py-3.5 font-sans text-base font-semibold text-white shadow-[0_18px_40px_-20px_rgba(79,70,229,0.9)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-[#4338CA]">
-              Signup
+            <button 
+              onClick={() => navigate(isAuthenticated ? '/dashboard' : '/signup')}
+              className="inline-flex min-w-36 items-center justify-center rounded-md bg-[#4F46E5] px-8 py-3.5 font-sans text-base font-semibold text-white shadow-[0_18px_40px_-20px_rgba(79,70,229,0.9)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-[#4338CA]">
+              {isAuthenticated ? 'Dashboard' : 'Signup'}
             </button>
-            <button className="inline-flex min-w-36 items-center justify-center rounded-md border border-[#4F46E5]/20 bg-[#4F46E5] px-8 py-3.5 font-sans text-base font-semibold text-white shadow-[0_18px_40px_-24px_rgba(79,70,229,0.7)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-[#4338CA]">
-              Login
-            </button>
+            {!isAuthenticated && (
+              <button 
+                onClick={() => navigate('/login')}
+                className="inline-flex min-w-36 items-center justify-center rounded-md border border-[#4F46E5]/20 bg-[#4F46E5] px-8 py-3.5 font-sans text-base font-semibold text-white shadow-[0_18px_40px_-24px_rgba(79,70,229,0.7)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-[#4338CA]">
+                Login
+              </button>
+            )}
           </div>
 
           <div className="mt-14 grid w-full max-w-3xl gap-4 text-left text-sm text-slate-700 sm:grid-cols-3 dark:text-slate-300">
