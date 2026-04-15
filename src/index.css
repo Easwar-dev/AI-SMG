@@ -32,3 +32,18 @@ body {
 ::selection {
   background: rgba(79, 70, 229, 0.18);
 }
+
+/* Select dropdown styling for dark mode visibility */
+select {
+  color-scheme: light dark;
+}
+
+select option {
+  color: #0f172a;
+  background-color: #f0fdf4;
+}
+
+.dark select option {
+  color: #f8fafc;
+  background-color: #1e293b;
+}

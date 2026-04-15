@@ -25,6 +25,14 @@ export const StrategyGenerator = () => {
   const [results, setResults] = useState(null)
   const [error, setError] = useState(null)
 
+  const copyToClipboard = (text, label) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success(`${label} copied to clipboard!`)
+    }).catch(() => {
+      toast.error('Failed to copy')
+    })
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({
@@ -86,8 +94,8 @@ export const StrategyGenerator = () => {
     <div>
       <Toaster position="top-right" />
       
-      <div className="bg-white dark:bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-8 border border-white/20">
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+      <div className="bg-white/55 dark:bg-white/5 backdrop-blur-2xl rounded-2xl shadow-sm p-8 border border-white/80 dark:border-white/10 transition-colors duration-500">
+        <h2 className="text-2xl font-bold text-slate-950 dark:text-white mb-6">
           🎯 Generate Your Strategy
         </h2>
 
@@ -105,14 +113,14 @@ export const StrategyGenerator = () => {
           {/* Platform and Topic */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-slate-950 dark:text-gray-300 mb-2">
                 Platform
               </label>
               <select
                 name="platform"
                 value={formData.platform}
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-white/50 dark:bg-white/5 text-slate-900 dark:text-white border border-white/30 dark:border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 bg-white/50 dark:bg-white/5 text-slate-950 dark:text-white border border-white/30 dark:border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               >
                 <option value="">Select a platform</option>
                 {PLATFORMS.map(platform => (
@@ -122,7 +130,7 @@ export const StrategyGenerator = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-slate-950 dark:text-gray-300 mb-2">
                 Topic
               </label>
               <input
@@ -131,7 +139,7 @@ export const StrategyGenerator = () => {
                 value={formData.topic}
                 onChange={handleChange}
                 placeholder="e.g., Travel, Technology, Fitness"
-                className="w-full px-4 py-2 bg-white/50 dark:bg-white/5 text-slate-900 dark:text-white border border-white/30 dark:border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-slate-400 dark:placeholder-gray-500"
+                className="w-full px-4 py-2 bg-white/50 dark:bg-white/5 text-slate-950 dark:text-white border border-white/30 dark:border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 placeholder-slate-400 dark:placeholder-gray-500"
               />
             </div>
           </div>
@@ -164,23 +172,67 @@ export const StrategyGenerator = () => {
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-2 text-sm">📱 Hashtags</h4>
+              <div className="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20 rounded-lg p-4 relative group">
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-semibold text-blue-900 dark:text-blue-300 text-sm">📱 Hashtags</h4>
+                  <button
+                    onClick={() => copyToClipboard(results.hashtags || '', 'Hashtags')}
+                    className="p-1 hover:bg-blue-200 dark:hover:bg-blue-500/20 rounded transition-colors opacity-0 group-hover:opacity-100"
+                    title="Copy hashtags"
+                  >
+                    <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                </div>
                 <p className="text-slate-700 dark:text-gray-300 text-sm break-words">{results.hashtags || 'N/A'}</p>
               </div>
 
-              <div className="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-lg p-4">
-                <h4 className="font-semibold text-green-900 dark:text-green-300 mb-2 text-sm">🔍 Keywords</h4>
+              <div className="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 rounded-lg p-4 relative group">
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-semibold text-green-900 dark:text-green-300 text-sm">🔍 Keywords</h4>
+                  <button
+                    onClick={() => copyToClipboard(results.keywords || '', 'Keywords')}
+                    className="p-1 hover:bg-green-200 dark:hover:bg-green-500/20 rounded transition-colors opacity-0 group-hover:opacity-100"
+                    title="Copy keywords"
+                  >
+                    <svg className="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                </div>
                 <p className="text-slate-700 dark:text-gray-300 text-sm break-words">{results.keywords || 'N/A'}</p>
               </div>
 
-              <div className="bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 rounded-lg p-4">
-                <h4 className="font-semibold text-purple-900 dark:text-purple-300 mb-2 text-sm">🎵 Audio</h4>
+              <div className="bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/20 rounded-lg p-4 relative group">
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-semibold text-purple-900 dark:text-purple-300 text-sm">🎵 Audio</h4>
+                  <button
+                    onClick={() => copyToClipboard(results.music || '', 'Audio')}
+                    className="p-1 hover:bg-purple-200 dark:hover:bg-purple-500/20 rounded transition-colors opacity-0 group-hover:opacity-100"
+                    title="Copy audio suggestion"
+                  >
+                    <svg className="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                </div>
                 <p className="text-slate-700 dark:text-gray-300 text-sm break-words">{results.music || 'N/A'}</p>
               </div>
 
-              <div className="bg-pink-50 dark:bg-pink-500/10 border border-pink-200 dark:border-pink-500/20 rounded-lg p-4">
-                <h4 className="font-semibold text-pink-900 dark:text-pink-300 mb-2 text-sm">🎬 Cover</h4>
+              <div className="bg-pink-50 dark:bg-pink-500/10 border border-pink-200 dark:border-pink-500/20 rounded-lg p-4 relative group">
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-semibold text-pink-900 dark:text-pink-300 text-sm">🎬 Cover</h4>
+                  <button
+                    onClick={() => copyToClipboard(results.cover || '', 'Cover')}
+                    className="p-1 hover:bg-pink-200 dark:hover:bg-pink-500/20 rounded transition-colors opacity-0 group-hover:opacity-100"
+                    title="Copy cover suggestion"
+                  >
+                    <svg className="w-4 h-4 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                  </button>
+                </div>
                 <p className="text-slate-700 dark:text-gray-300 text-sm break-words">{results.cover || 'N/A'}</p>
               </div>
             </div>

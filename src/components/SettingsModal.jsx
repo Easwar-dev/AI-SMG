@@ -41,6 +41,17 @@ export const SettingsModal = ({ isOpen, onClose }) => {
     }
   }
 
+  const handleLogout = async () => {
+    try {
+      await logout()
+      toast.success('Logged out successfully')
+      onClose()
+      setTimeout(() => navigate('/', { replace: true }), 500)
+    } catch (err) {
+      toast.error('Error during logout')
+    }
+  }
+
   const handleDeleteAccount = async () => {
     if (!confirm('This will permanently delete your account and all data. Are you sure?')) return
 
@@ -73,7 +84,7 @@ export const SettingsModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <Toaster position="top-right" />
+      <Toaster position="top-right" duration={3000} />
       
       {/* Backdrop */}
       <div
@@ -131,6 +142,13 @@ export const SettingsModal = ({ isOpen, onClose }) => {
             </h3>
             
             <div className="space-y-3">
+              <button
+                onClick={handleLogout}
+                className="w-full px-4 py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition duration-200"
+              >
+                🚪 Logout
+              </button>
+
               <button
                 onClick={handleDeleteAllHistory}
                 disabled={deleting} 

@@ -3,27 +3,12 @@
  * Landing page with signup/login buttons
  */
 
-import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 export const Home = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [theme, setTheme] = useState('dark');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setTheme(savedTheme);
-    document.documentElement.classList.toggle('dark', savedTheme === 'dark');
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
@@ -106,15 +91,6 @@ export const Home = () => {
           ))}
         </div>
       </div>
-
-      {/* Theme Toggle */}
-      <button
-        onClick={toggleTheme}
-        className="fixed bottom-8 right-8 p-3 bg-slate-700 hover:bg-slate-600 rounded-full transition duration-300 z-50"
-        title="Toggle theme"
-      >
-        {theme === 'dark' ? '☀️' : '🌙'}
-      </button>
     </div>
   );
 };

@@ -30,6 +30,17 @@ export const StrategyHistory = () => {
       const data = await response.json()
 
       if (!response.ok) {
+        // If token is invalid/expired, try to refresh
+        if (response.status === 401) {
+          try {
+            await refreshToken()
+            // Retry loading history
+            setTimeout(() => loadHistory(), 500)
+            return
+          } catch (refreshErr) {
+            throw new Error('Session expired. Please login again.')
+          }
+        }
         throw new Error(data.message || 'Failed to load history')
       }
 
@@ -40,6 +51,27 @@ export const StrategyHistory = () => {
       console.error('Error loading history:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const refreshToken = async () => {
+    const refreshTokenValue = tokenStorage.getRefreshToken()
+    const response = await fetch('http://localhost:5000/api/auth/refresh', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refresh_token: refreshTokenValue })
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to refresh token')
+    }
+
+    const data = await response.json()
+    tokenStorage.setAccessToken(data.access_token)
+    if (data.refresh_token) {
+      tokenStorage.setRefreshToken(data.refresh_token)
     }
   }
 
@@ -117,9 +149,9 @@ export const StrategyHistory = () => {
     <div>
       <Toaster position="top-right" />
       
-      <div className="bg-white dark:bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-8 border border-white/20">
+      <div className="bg-white/55 dark:bg-white/5 backdrop-blur-2xl rounded-2xl shadow-sm p-8 border border-white/80 dark:border-white/10 transition-colors duration-500">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-slate-950 dark:text-white">
             📚 Recent Strategies
           </h2>
           
@@ -135,7 +167,7 @@ export const StrategyHistory = () => {
 
         {history.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-slate-500 dark:text-gray-400 text-lg">
+            <p className="text-slate-600 dark:text-gray-400 text-lg">
               No strategies generated yet. Start by creating your first one! 🚀
             </p>
           </div>
@@ -144,7 +176,7 @@ export const StrategyHistory = () => {
             {history.map((item) => (
               <div
                 key={item.id}
-                className="bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg p-4 hover:shadow-md transition duration-200"
+                className="bg-white/50 dark:bg-white/5 border border-white/60 dark:border-white/10 rounded-lg p-4 hover:shadow-md transition duration-200"
               >
                 <div className="flex justify-between items-start gap-4 flex-wrap">
                   <div className="flex-1 min-w-0">

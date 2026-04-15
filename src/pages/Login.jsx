@@ -14,6 +14,7 @@ export const Login = () => {
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -88,7 +89,7 @@ export const Login = () => {
 
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster position="top-right" duration={3000} />
       <div className="min-h-screen bg-gradient-to-b from-[#F0FDF4] to-[#DCFCE7] dark:from-slate-900 dark:to-slate-800 flex items-center justify-center px-4 relative overflow-hidden">
         <button
           type="button"
@@ -152,16 +153,35 @@ export const Login = () => {
                 <label className="block text-sm font-medium text-slate-800 dark:text-gray-300 mb-2">
                   Password
                 </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className={`w-full px-4 py-2 bg-white/50 dark:bg-white/5 text-slate-950 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 border border-white/30 dark:border-white/10 ${
-                    errors.password ? 'ring-red-500' : 'focus:ring-emerald-500 dark:focus:ring-emerald-400'
-                  }`}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    className={`w-full px-4 py-2 pr-10 bg-white/50 dark:bg-white/5 text-slate-950 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 border border-white/30 dark:border-white/10 ${
+                      errors.password ? 'ring-red-500' : 'focus:ring-emerald-500 dark:focus:ring-emerald-400'
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-gray-400 hover:text-slate-800 dark:hover:text-gray-200 transition-colors"
+                    aria-label="Toggle password visibility"
+                  >
+                    {showPassword ? (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-14-14zM10 3c-3.44 0-6.268 2.943-7.542 7 .47 1.495 1.27 2.878 2.335 4.003l1.768-1.768a4 4 0 015.672-5.672l1.768-1.768C13.878 4.271 12.495 3.47 10 3zm7.542 7c-.47 1.495-1.27 2.878-2.335 4.003l-1.768-1.768a4 4 0 00-5.672-5.672L5.243 6.03C6.122 4.271 7.505 3.47 10 3c3.44 0 6.268 2.943 7.542 7z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 {errors.password && (
                   <p className="text-red-500 text-sm mt-1">{errors.password}</p>
                 )}
